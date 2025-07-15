@@ -2,19 +2,23 @@ CC := cc
 
 NAME := fdf
 CFLAGS += -Wall -Wextra -Werror
-CPPFLAGS :=
-LDFLAGS := -lm
+CPPFLAGS := -Ilibft/include
+LDFLAGS += -lXext -lX11 -lmlx -lm
 HEADERS := fdf.h
 SRC := main.c
 OBJS := $(SRC:.c=.o)
+LIBFT := libft/libft.a
 
 all: $(NAME)
 
-$(NAME): $(OBJS)
-	$(CC) $(LDFLAGS) -o $@ $^
+$(NAME): $(OBJS) $(LIBFT)
+	$(CC) -o $@ $^ $(LDFLAGS)
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c -o $@ $<
+$(LIBFT):
+	$(MAKE) -C $(dir $(LIBFT))
+
+%.o: %.c $(HEADERS)
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 clean:
 	rm -f $(OBJS)
