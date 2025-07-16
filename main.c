@@ -28,18 +28,14 @@ static inline int	ft_abs(int n)
 	return (n);
 }
 
-int	fdf_render(t_fdf *f)
+void transform_points(t_fdf *f)
 {
 	size_t	i;
 	size_t	j;
 	size_t	k;
-	float		*sp;
-	float		*dp;
+	float	*sp;
+	float	*dp;
 
-	// Update matrices
-	transformation_stack_update(&f->transformation_stack);
-
-	// Transform points
 	i = 0;
 	while ((int)i < f->width * f->height)
 	{
@@ -60,86 +56,109 @@ int	fdf_render(t_fdf *f)
 		}
 		++i;
 	}
+}
 
-	int i1 = 0;
-	while (i1 < 600 * 600)
+void	clear_screen(t_fdf *f)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < 600 * 600)
 	{
-		((unsigned int*)f->renderer.data)[i1] = 0x00101010;
-		++i1;
+		((unsigned int*)f->renderer.data)[i] = 0x00101010;
+		++i;
 	}
+}
 
-	int x;
-	int y;
-	int p1[3];
-	int p2[3];
-	int *d;
+void draw_line_x_major(t_bresenham_state *bresenham, unsigned int *screen)
+{
+	int	x;
+	int	y;
+	int j;
+
+	bresenham->error_count = 2 * bresenham->delta[1] - bresenham->delta[0];
+	x = bresenham->p1[0];
+	y = bresenham->p1[1];
+	j = 0;
+	while (j <= bresenham->delta[0])
+	{
+		if (x >= 0 && x < 600 && y >= 0 && y < 600)
+			screen[y * 600 + x] = 0xffffffff;
+		x += bresenham->step[0];
+		bresenham->error_count += 2 * bresenham->delta[1];
+		if (bresenham->error_count > 0)
+		{
+			y += bresenham->step[1];
+			bresenham->error_count -= 2 * bresenham->delta[0];
+		}
+		++j;
+	}
+}
+
+void draw_line_y_major(t_bresenham_state *bresenham, unsigned int *screen)
+{
+	int	x;
+	int	y;
+	int i;
+
+	bresenham->error_count = 2 * bresenham->delta[1] - bresenham->delta[0];
+	x = bresenham->p1[0];
+	y = bresenham->p1[1];
+	i = 0;
+	while (i <= bresenham->delta[1])
+	{
+		if (x >= 0 && x < 600 && y >= 0 && y < 600)
+			screen[y * 600 + x] = 0xffffffff;
+		y += bresenham->step[1];
+		bresenham->error_count += 2 * bresenham->delta[0];
+		if (bresenham->error_count > 0)
+		{
+			x += bresenham->step[0];
+			bresenham->error_count -= 2 * bresenham->delta[1];
+		}
+		++i;
+	}
+}
+
+void bresenham_init(t_bresenham_state *b, t_point3 *p1, t_point3 *p2)
+{
+	b->p1[0] = (int)p1->x;
+	b->p1[1] = (int)p1->y;
+	b->p1[2] = (int)p1->z;
+	b->p2[0] = (int)p2->x;
+	b->p2[1] = (int)p2->y;
+	b->p2[2] = (int)p2->z;
+	b->delta[0] = b->p2[0] - b->p1[0];
+	b->delta[1] = b->p2[1] - b->p1[1];
+	b->delta[2] = b->p2[2] - b->p1[2];
+	b->step[0] = 1;
+	b->step[1] = 1;
+	if (b->delta[0] < 0)
+		b->step[0] = -1;
+	if (b->delta[1] < 0)
+		b->step[1] = -1;
+	b->delta[0] = ft_abs(b->p2[0] - b->p1[0]);
+	b->delta[1] = ft_abs(b->p2[1] - b->p1[1]);
+	b->delta[2] = ft_abs(b->p2[2] - b->p1[2]);
+}
+
+int	fdf_render(t_fdf *f)
+{
+	size_t	i;
+
+	transformation_stack_update(&f->transformation_stack);
+	transform_points(f);
+	clear_screen(f);
 	i = 0;
 	while (i < f->n_edges)
 	{
-		p1[0] = (int)f->transformed_points[f->edges[i][0]].x;
-		p1[1] = (int)f->transformed_points[f->edges[i][0]].y;
-		p1[2] = (int)f->transformed_points[f->edges[i][0]].z;
-
-		p2[0] = (int)f->transformed_points[f->edges[i][1]].x;
-		p2[1] = (int)f->transformed_points[f->edges[i][1]].y;
-		p2[2] = (int)f->transformed_points[f->edges[i][1]].z;
-
-		d = f->bresenham_state.delta;
-		d[0] = p2[0] - p1[0];
-		d[1] = p2[1] - p1[1];
-		d[3] = p2[2] - p1[2];
-		f->bresenham_state.step[0] = 1;
-		f->bresenham_state.step[1] = 1;
-		if (d[0] < 0)
-			f->bresenham_state.step[0] = -1;
-		if (d[1] < 0)
-			f->bresenham_state.step[1] = -1;
-		d[0] = ft_abs(p2[0] - p1[0]);
-		d[1] = ft_abs(p2[1] - p1[1]);
-		d[2] = ft_abs(p2[2] - p1[2]);
-
-		if (d[0] >= d[1])
-		{
-			// X major
-			f->bresenham_state.error_count = 2 * d[1] - d[0];
-			x = p1[0];
-			y = p1[1];
-			j = 0;
-			while ((int)j <= d[0])
-			{
-				if (x >= 0 && x < 600 && y >= 0 && y < 600)
-					((unsigned int*) f->renderer.data)[y * 600 + x] = 0xffffffff;
-				x += f->bresenham_state.step[0];
-				f->bresenham_state.error_count += 2 * d[1];
-				if (f->bresenham_state.error_count > 0)
-				{
-					y += f->bresenham_state.step[1];
-					f->bresenham_state.error_count -= 2 * d[0];
-				}
-				++j;
-			}
-		}
+		bresenham_init(&f->bresenham_state,
+			&f->transformed_points[f->edges[i][0]],
+			&f->transformed_points[f->edges[i][1]]);
+		if (f->bresenham_state.delta[0] >= f->bresenham_state.delta[1])
+			draw_line_x_major(&f->bresenham_state, (unsigned int *)f->renderer.data);
 		else
-		{
-			// Y major
-			f->bresenham_state.error_count = 2 * d[0] - d[1];
-			x = p1[0];
-			y = p1[1];
-			j = 0;
-			while ((int)j <= d[1])
-			{
-				if (x >= 0 && x < 600 && y >= 0 && y < 600)
-					((unsigned int*) f->renderer.data)[y * 600 + x] = 0xffffffff;
-				y += f->bresenham_state.step[1];
-				f->bresenham_state.error_count += 2 * d[0];
-				if (f->bresenham_state.error_count > 0)
-				{
-					x += f->bresenham_state.step[0];
-					f->bresenham_state.error_count -= 2 * d[1];
-				}
-				++j;
-			}
-		}
+			draw_line_y_major(&f->bresenham_state, (unsigned int *)f->renderer.data);
 		++i;
 	}
 	if (mlx_put_image_to_window(f->mlx, f->window, f->image, 0, 0) == -1)

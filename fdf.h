@@ -107,6 +107,8 @@ typedef struct s_bresenham_state
 {
 	int				delta[3];
 	int				step[3];
+	int				p1[3];
+	int				p2[3];
 	int 			error_count;
 }	t_bresenham_state;
 
