@@ -14,6 +14,25 @@
 # define FDF_H
 
 #include <stdbool.h>
+#include <stddef.h>
+#include <sys/types.h>
+
+bool ft_realloc(void **ptr, size_t *cap, size_t start);
+
+typedef struct s_parser
+{
+	ssize_t			bytes_read;
+	size_t			values_read;
+	size_t			last_delim;
+	size_t			arr_capacity;
+	int				x;
+	int				y;
+	int				z;
+	bool			width_set;
+}	t_parser;
+
+
+int	ft_strntoi(int *n, char *str, size_t max);
 
 typedef struct s_point3
 {
@@ -84,17 +103,10 @@ void	transformation_stack_persp_y(t_transformation_stack *t, float dy);
 void	transformation_stack_persp_z(t_transformation_stack *t, float dz);
 void	transformation_stack_update(t_transformation_stack *t);
 
-typedef enum e_axis_major
-{
-	X_MAJOR,
-	Y_MAJOR,
-}	t_axis_major;
-
 typedef struct s_bresenham_state
 {
 	int				delta[3];
 	int				step[3];
-	t_axis_major 	axis_major;
 	int 			error_count;
 }	t_bresenham_state;
 
@@ -133,5 +145,13 @@ typedef struct s_fdf
 
 void	make_fdf(t_fdf *f);
 int		fdf_render(t_fdf *f);
+
+int		key_press_handler(int keycode, void *mlx);
+int 	button_press_handler(int button, int x, int y, t_fdf *fdf);
+int 	button_release_handler(int button, int x, int y, t_fdf *fdf);
+int		motion_handler(int x, int y, t_fdf *fdf);
+
+bool	parse_buffer(t_parser *p, t_fdf *fdf, char *buf, size_t end);
+bool	parse_file(t_fdf *fdf);
 
 #endif
