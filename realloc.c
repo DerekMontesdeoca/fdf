@@ -1,40 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   realloc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dmontesd <dmontesd@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/11 19:45:31 by dmontesd          #+#    #+#             */
-/*   Updated: 2025/07/14 00:38:25 by dmontesd         ###   ########.fr       */
+/*   Created: 2025/07/15 21:47:48 by dmontesd          #+#    #+#             */
+/*   Updated: 2025/07/15 21:47:49 by dmontesd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <assert.h>
+#include <stdbool.h>
+#include <stddef.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <mlx/mlx.h>
-#include "fdf.h"
 #include "libft/libft.h"
 
-int	main(int argc, char **argv)
+bool	ft_realloc(void **ptr, size_t *cap, size_t start)
 {
-	int		exit_code;
-	t_fdf	fdf;
+	size_t	new_cap;
+	void	*temp;
 
-	if (argc != 2)
-	{
-		ft_fprintf(STDERR_FILENO, "Usage: fdf FILE \n");
-		return (EXIT_FAILURE);
-	}
-	fdf = (t_fdf){0};
-	if (make_fdf(&fdf, argv[1]))
-	{
-		exit_code = EXIT_SUCCESS;
-		mlx_loop(fdf.mlx);
-	}
+	if (*cap == 0)
+		new_cap = start;
 	else
-		exit_code = EXIT_FAILURE;
-	fdf_destroy_contents(&fdf);
-	return (exit_code);
+		new_cap = *cap * 2;
+	temp = malloc(new_cap);
+	if (temp == NULL)
+		return (false);
+	ft_memcpy(temp, *ptr, *cap);
+	free(*ptr);
+	*ptr = temp;
+	*cap = new_cap;
+	return (true);
 }

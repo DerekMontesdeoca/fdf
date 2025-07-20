@@ -5,3 +5,4 @@ fdf
 compile_commands.json
 .cache
 .idea
+perf.data
