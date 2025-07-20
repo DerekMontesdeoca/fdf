@@ -42,16 +42,16 @@ static bool	advance_line(t_parser *p, t_fdf *fdf)
     return (true);
 }
 
-static inline void    push_value(t_parser *p, t_fdf *fdf )
+static inline void    push_value(t_parser *p, t_point3 *points)
 {
-    fdf->points[p->values_read].x = (float)p->x;
-    fdf->points[p->values_read].y = (float)p->y;
-    fdf->points[p->values_read].z = (float)p->z;
+    points[p->values_read].x = (float)p->x;
+    points[p->values_read].y = (float)p->y;
+    points[p->values_read].z = (float)p->z;
     ++p->values_read;
     ++p->x;
 }
 
-bool parse_buffer(t_parser *p, t_fdf *fdf, char *buf, size_t end)
+bool parse_chunk(t_parser *p, t_fdf *fdf, size_t chunk_end)
 {
     size_t i;
     int number_len;
@@ -59,21 +59,22 @@ bool parse_buffer(t_parser *p, t_fdf *fdf, char *buf, size_t end)
     i = 0;
     while (true)
     {
-        while (i < end && is_delim(buf[i]))
+        while (i < chunk_end && is_delim(p->buf[i]))
             ++i;
-        if (i == end)
+        if (i == chunk_end)
             break;
-        number_len = ft_strntoi(&p->z, &buf[i], end - i);
+        number_len = ft_strntoi(&p->z, &p->buf[i], chunk_end - i);
         if (number_len <= 0)
             return (false);
         i += number_len;
         if (sizeof(t_point3[p->values_read]) >= p->arr_capacity)
-            if (!ft_realloc((void**)&fdf->points, &p->arr_capacity, sizeof(t_point3[4096])))
+            if (!ft_realloc((void**)&fdf->points, &p->arr_capacity,
+                sizeof(t_point3[4096])))
                 return (false);
-        push_value(p, fdf);
-        while (i < end && buf[i] == ' ')
+        push_value(p, fdf->points);
+        while (i < chunk_end && p->buf[i] == ' ')
             ++i;
-        if ((i == end && p->bytes_read == 0) || buf[i] == '\n')
+        if ((i == chunk_end && p->bytes_read == 0) || p->buf[i] == '\n')
             if (!advance_line(p, fdf))
                 return (false);
     }
