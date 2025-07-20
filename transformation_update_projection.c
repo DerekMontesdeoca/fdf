@@ -32,7 +32,7 @@ static inline void	projection_fit_box(t_projection_ctl *p)
 	p->f = p->box[2] * 2;
 }
 
-void	update_projection(t_transformation_stack *t)
+void	transformation_update_projection(t_transformation_stack *t)
 {
 	t_projection_ctl	*proj;
 

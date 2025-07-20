@@ -15,22 +15,21 @@
 #include <stdlib.h>
 #include "libft/libft.h"
 
-bool ft_realloc(void **ptr, size_t *cap, size_t start)
+bool	ft_realloc(void **ptr, size_t *cap, size_t start)
 {
-    size_t	new_cap;
+	size_t	new_cap;
+	void	*temp;
 
-    void *temp;
-    if (*cap == 0)
-        new_cap = start;
-    else
-        new_cap = *cap * 2;
-    temp = malloc(new_cap);
-    if (temp == NULL)
-        return (false);
-    ft_memcpy(temp, *ptr, *cap);
-    free(*ptr);
-    *ptr = temp;
-    *cap = new_cap;
-    return (true);
+	if (*cap == 0)
+		new_cap = start;
+	else
+		new_cap = *cap * 2;
+	temp = malloc(new_cap);
+	if (temp == NULL)
+		return (false);
+	ft_memcpy(temp, *ptr, *cap);
+	free(*ptr);
+	*ptr = temp;
+	*cap = new_cap;
+	return (true);
 }
-

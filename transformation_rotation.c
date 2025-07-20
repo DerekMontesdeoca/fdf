@@ -12,20 +12,20 @@
 
 #include "fdf.h"
 
-void transformation_stack_rotate_x(t_transformation_stack *t, float dx)
+void	transformation_stack_rotate_x(t_transformation_stack *t, float dx)
 {
-    t->dirty[M_ROTATION_X] = true;
-    t->rx += dx;
+	t->dirty[M_ROTATION_X] = true;
+	t->rx += dx;
 }
 
-void transformation_stack_rotate_y(t_transformation_stack *t, float dy)
+void	transformation_stack_rotate_y(t_transformation_stack *t, float dy)
 {
-    t->dirty[M_ROTATION_Y] = true;
-    t->ry += dy;
+	t->dirty[M_ROTATION_Y] = true;
+	t->ry += dy;
 }
 
-void transformation_stack_rotate_z(t_transformation_stack *t, float dz)
+void	transformation_stack_rotate_z(t_transformation_stack *t, float dz)
 {
-    t->dirty[M_ROTATION_Z] = true;
-    t->rz += dz;
+	t->dirty[M_ROTATION_Z] = true;
+	t->rz += dz;
 }

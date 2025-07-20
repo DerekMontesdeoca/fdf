@@ -12,21 +12,15 @@
 
 #include "fdf.h"
 
-void transformation_stack_persp_x(t_transformation_stack *t, float dx)
-{
-    t->dirty[M_PERSPECTIVE_X] = true;
-    t->px += dx;
-}
-
-void transformation_stack_persp_y(t_transformation_stack *t, float dy)
-{
-    t->dirty[M_PERSPECTIVE_Y] = true;
-    t->py += dy;
-}
-
-void transformation_stack_persp_z(t_transformation_stack *t, float dz)
-{
-
-    t->dirty[M_PERSPECTIVE_Z] = true;
-    t->pz += dz;
+void	transformation_stack_ortho(
+	t_transformation_stack *t,
+	float x,
+	float y,
+	float z
+) {
+	t->dirty[M_PROJECTION] = true;
+	t->projection.type = PERSPECTIVE_ORTHO;
+	t->projection.box[0] = x;
+	t->projection.box[1] = y;
+	t->projection.box[2] = z;
 }

@@ -14,6 +14,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <fcntl.h>
+#include <stdio.h>
 #include "fdf.h"
 #include "libft/libft.h"
 
@@ -24,19 +26,24 @@ static inline bool	is_delim(char c)
 	return (c == ' ' || c == '\n');
 }
 
-static bool	find_last_delimiter(t_parser *p, char *buf, size_t read_start)
-{
+static inline bool	find_chunk_end(
+	t_parser *p,
+	char *buf,
+	size_t leftover,
+	size_t *chunk_end
+) {
 	bool	delim_found;
+	size_t	end;
 
 	if (p->bytes_read == 0)
-		p->last_delim = read_start;
+		end = leftover;
 	else
 	{
-		p->last_delim = read_start + p->bytes_read;
+		end = leftover + p->bytes_read;
 		delim_found = false;
-		while (p->last_delim-- > 0)
+		while (end-- > 0)
 		{
-			if (is_delim(buf[p->last_delim]))
+			if (is_delim(buf[end]))
 			{
 				delim_found = true;
 				break ;
@@ -48,46 +55,60 @@ static bool	find_last_delimiter(t_parser *p, char *buf, size_t read_start)
 			return (false);
 		}
 	}
+	*chunk_end = end;
 	return (true);
 }
 
-static bool	parse_file_inner(t_parser *p, t_fdf *fdf, int fd, char *buf)
+/**
+ * Chunks represent the parseable end of the buffer. Whatever is after chunk end
+ * is copied to the front of the buffer.
+ */
+static inline bool	parse_buffered(t_parser *p, t_fdf *fdf, int fd)
 {
-	size_t			read_start;
+	size_t			leftover;
+	size_t			chunk_end;
 
-	read_start = 0;
+	leftover = 0;
 	while (true)
 	{
-		p->bytes_read = read(fd, buf + read_start, INPUT_BUF_SIZE - read_start);
+		p->bytes_read = read(fd, p->buf + leftover, INPUT_BUF_SIZE - leftover);
 		if (p->bytes_read < 0)
-			return (false);
-		if (p->bytes_read == 0 && read_start == 0)
+			return (perror("read: "), false);
+		if (p->bytes_read == 0 && leftover == 0)
 			break ;
-		if (!find_last_delimiter(p, buf, read_start))
+		if (!find_chunk_end(p, p->buf, leftover, &chunk_end))
 			return (false);
-		parse_buffer(p, fdf, buf, p->last_delim);
+		if (!parse_chunk(p, fdf, chunk_end))
+			return (false);
 		if (p->bytes_read == 0)
 			break ;
-		// Move remaining string after last delimiter to the beginning
-		// of the buffer.
-		ft_memmove(buf, &buf[p->last_delim + 1],
-			read_start + p->bytes_read - p->last_delim - 1);
-		read_start = read_start + p->bytes_read - p->last_delim - 1;
+		ft_memmove(p->buf, &p->buf[chunk_end + 1],
+			leftover + p->bytes_read - chunk_end - 1);
+		leftover = leftover + p->bytes_read - chunk_end - 1;
 	}
+	fdf->min_z = p->min_z;
+	fdf->max_z = p->max_z;
 	return (true);
 }
 
-bool	parse_file(t_fdf *fdf)
+bool	parse_file(t_fdf *fdf, char *filename)
 {
-	char		*buf;
 	bool		ok;
 	t_parser	parser;
+	int			fd;
 
-	buf = malloc(INPUT_BUF_SIZE);
+	ok = false;
 	parser = (t_parser){0};
-	if (buf == NULL)
-		return (false);
-	ok = parse_file_inner(&parser, fdf, STDIN_FILENO, buf);
-	free(buf);
+	parser.buf = malloc(INPUT_BUF_SIZE);
+	fd = open(filename, O_RDONLY);
+	if (fd >= 0)
+	{
+		if (parser.buf != NULL)
+			ok = parse_buffered(&parser, fdf, fd);
+		close(fd);
+	}
+	else
+		perror("open: ");
+	free(parser.buf);
 	return (ok);
 }
