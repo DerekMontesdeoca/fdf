@@ -38,7 +38,7 @@ void	transformation_update_projection(t_transformation_stack *t)
 
 	if (!t->dirty[M_PROJECTION])
 		return ;
-	if (t->projection.type == PERSPECTIVE_ORTHO)
+	if (t->projection.type == PROJECTION_ORTHO)
 	{
 		proj = &t->projection;
 		projection_fit_box(proj);

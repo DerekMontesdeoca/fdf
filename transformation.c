@@ -32,7 +32,7 @@ void	make_transformation_stack(t_transformation_stack *t)
 	t->ty = 0;
 	t->tz = 0;
 	t->projection.zoom_factor = 1.0f;
-	t->projection.type = PERSPECTIVE_ORTHO;
+	t->projection.type = PROJECTION_ORTHO;
 	t->projection.pan_x = 0;
 	t->projection.pan_y = 0;
 	i = 0;

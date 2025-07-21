@@ -12,6 +12,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 #include "libft/libft.h"
 
 #define CUTOFF 214748364
@@ -56,4 +57,45 @@ int	ft_strntoi(int *n, char *str, size_t max)
 	if (is_negative)
 		*n = (int)-accumulator;
 	return ((int)i);
+}
+
+static inline bool	skip_prefix(char **str, char *end)
+{
+	if (*str != end && **str == '0')
+	{
+		++*str;
+		if (*str == end || (**str != 'x' && **str != 'X'))
+			return (false);
+		++*str;
+	}
+	return (true);
+}
+
+bool strntohex(uint32_t *n, char *str, char *end)
+{
+	static const char	*hex = "0123456789abcdef";
+	uint32_t			num;
+	char				*found;
+	int					i;
+
+	if (!skip_prefix(&str, end))
+		return (false);
+	if (str == end)
+		return (false);
+	num = 0;
+	i = 0;
+	while (i < 6)
+	{
+		if (str == end)
+			return (false);
+		found = ft_strchr(hex, ft_tolower(*str));
+		if (!found)
+			return (false);
+		num <<= 4;
+		num |= (found - hex);
+		++i;
+		++str;
+	}
+	*n = num;
+	return (true);
 }

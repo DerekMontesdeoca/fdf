@@ -20,25 +20,34 @@
 
 void	transform_points(t_fdf *f)
 {
-	int		i[3];
-	float	*sp;
+	int		i[4];
+	float	sp[4];
 	float	*dp;
+	int		flat_index;
 
 	i[0] = 0;
-	while ((int)i[0] < f->width * f->height)
+	while (i[0] < f->height)
 	{
-		f->points[i[0]].w = 1;
-		sp = (float *) &f->points[i[0]];
-		dp = (float *) &f->transformed_points[i[0]];
 		i[1] = 0;
-		while (i[1] < 4)
+		while (i[1] < f->width)
 		{
-			dp[i[1]] = 0;
+			flat_index = i[0] * f->width + i[1];
+			sp[0] = (float) i[1];
+			sp[1] = (float) i[0];
+			sp[2] =  f->points[flat_index];
+			sp[3] = 1;
+			dp = (float *) &f->transformed_points[flat_index];
 			i[2] = 0;
 			while (i[2] < 4)
 			{
-				dp[i[1]] += f->transformation_stack.combined[i[1] * 4 + i[2]]
-					* sp[i[2]];
+				dp[i[2]] = 0;
+				i[3] = 0;
+				while (i[3] < 4)
+				{
+					dp[i[2]] += f->transformation_stack.combined[i[2] * 4 + i[3]]
+						* sp[i[3]];
+					++i[3];
+				}
 				++i[2];
 			}
 			++i[1];
@@ -98,7 +107,6 @@ int	fdf_render(t_fdf *f)
 {
 	if (clock_gettime(CLOCK_MONOTONIC, &f->renderer.tick) < 0)
 		return (-1);
-	transformation_stack_rotate_y(&f->transformation_stack, 0.00001f);
 	transformation_stack_update(&f->transformation_stack);
 	transform_points(f);
 	update_timer(&f->renderer);

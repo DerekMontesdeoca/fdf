@@ -19,7 +19,7 @@ void	transformation_stack_ortho(
 	float z
 ) {
 	t->dirty[M_PROJECTION] = true;
-	t->projection.type = PERSPECTIVE_ORTHO;
+	t->projection.type = PROJECTION_ORTHO;
 	t->projection.box[0] = x;
 	t->projection.box[1] = y;
 	t->projection.box[2] = z;

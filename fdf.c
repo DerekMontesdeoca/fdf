@@ -19,7 +19,7 @@
 #include <X11/X.h>
 #include "libft/libft.h"
 
-#define M_PI_8 0.392699082f
+#define ISOMETRIC_ANGLE 0.6155f
 
 static inline void	init_transformation_stack(t_fdf *f)
 {
@@ -28,9 +28,10 @@ static inline void	init_transformation_stack(t_fdf *f)
 
 	bounding_box = fmaxf(fmaxf((float)f->width, (float)f->height),
 			(float) f->max_z - (float) f->min_z);
-	with_margin = bounding_box * 1.1f;
+	with_margin = bounding_box * 2.0f;
+	// transformation_stack_rview_y(&f->transformation_stack, ISOMETRIC_ANGLE);
 	transformation_stack_rview_z(&f->transformation_stack, M_PI_4);
-	transformation_stack_rview_x(&f->transformation_stack, M_PI_8);
+	transformation_stack_rview_x(&f->transformation_stack, M_PI_2 - ISOMETRIC_ANGLE);
 	transformation_stack_origin(&f->transformation_stack,
 		-((float)f->width / 2), -((float)f->height / 2),
 		-(float)(f->min_z + f->max_z) / 2.0f);
@@ -38,6 +39,17 @@ static inline void	init_transformation_stack(t_fdf *f)
 		-with_margin / 2.0f);
 	transformation_stack_ortho(&f->transformation_stack,
 		with_margin, with_margin, with_margin);
+	// color init
+	if (!f->has_color)
+	{
+		float delta = 100.0f / (float)(f->max_z - f->min_z);
+		int i = 0;
+		while (i < f->width * f->height)
+		{
+			f->color[i] = (uint32_t)(delta * f->points[i] + 155.0f) << 8;
+			++i;
+		}
+	}
 }
 
 static inline void	init_mlx_handlers(t_fdf *f)
@@ -54,7 +66,7 @@ static inline void	init_mlx_handlers(t_fdf *f)
 		button_release_handler, f);
 }
 
-static inline bool	init_with_points(t_fdf *f)
+static inline bool	init_after_parsing(t_fdf *f)
 {
 	bool	ok;
 	size_t	n;
@@ -98,7 +110,7 @@ bool	make_fdf(t_fdf *f, char *filename)
 				&& f->window != NULL
 				&& f->image != NULL
 				&& f->renderer.data != NULL)
-				ok = init_with_points(f);
+				ok = init_after_parsing(f);
 		}
 		else
 			perror("gettime: ");
@@ -109,6 +121,7 @@ bool	make_fdf(t_fdf *f, char *filename)
 void	fdf_destroy_contents(t_fdf *f)
 {
 	free(f->points);
+	free(f->color);
 	free(f->transformed_points);
 	free(f->edges);
 	mlx_destroy_image(f->mlx, f->image);

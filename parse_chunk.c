@@ -42,11 +42,12 @@ static bool	advance_line(t_parser *p, t_fdf *fdf)
 	return (true);
 }
 
-static inline void	push_value(t_parser *p, t_point4 *points)
+static inline void	push_value(t_parser *p, t_fdf *fdf)
 {
-	points[p->values_read].x = (float)p->x;
-	points[p->values_read].y = (float)p->y;
-	points[p->values_read].z = (float)p->z;
+
+	if (p->has_color)
+		fdf->color[p->values_read] = p->color;
+	fdf->points[p->values_read] = (float)p->z;
 	if (!p->z_set || p->z < p->min_z)
 		p->min_z = p->z;
 	if (!p->z_set || p->z > p->max_z)
@@ -63,6 +64,40 @@ static inline int	skip_to_delim(char *buf, int end, int i)
 	return (i);
 }
 
+static bool realloc_all(t_parser *p, t_fdf *fdf)
+{
+	size_t	capacity;
+
+	if (p->values_read >= p->arr_capacity)
+	{
+		capacity = sizeof(float[p->arr_capacity]);
+		if (!ft_realloc((void **) &fdf->points, &capacity,
+			sizeof(float[4096])))
+			return (false);
+		capacity = sizeof(uint32_t[p->arr_capacity]);
+		if (!ft_realloc((void **) &fdf->color, &capacity,
+			sizeof(uint32_t[4096])))
+			return (false);
+		p->arr_capacity = capacity / sizeof(*fdf->color);
+	}
+	return (true);
+}
+
+static inline bool	parse_color(t_parser *p, size_t chunk_end, size_t *i)
+{
+	if (p->has_color || (*i < chunk_end && p->buf[*i] == ','))
+	{
+		if (*i == chunk_end || p->buf[*i] != ',')
+			return (false);
+		++*i;
+		p->has_color = true;
+		if (!strntohex(&p->color, &p->buf[*i], p->buf + chunk_end))
+			return (false);
+		*i += 8;
+	}
+	return (true);
+}
+
 bool	parse_chunk(t_parser *p, t_fdf *fdf, size_t chunk_end)
 {
 	size_t	i;
@@ -75,14 +110,16 @@ bool	parse_chunk(t_parser *p, t_fdf *fdf, size_t chunk_end)
 		if (i == chunk_end)
 			break ;
 		number_len = ft_strntoi(&p->z, &p->buf[i], chunk_end - i);
-		if (number_len == 0 || (i + number_len < chunk_end
-				&& !is_delim(p->buf[i + number_len])))
+		if (number_len == 0)
 			return (false);
 		i += number_len;
-		if (sizeof(t_point4[p->values_read]) >= p->arr_capacity && !ft_realloc(
-				(void**)&fdf->points, &p->arr_capacity, sizeof(t_point4[4096])))
+		if (!parse_color(p, chunk_end, &i))
 			return (false);
-		push_value(p, fdf->points);
+		if (i + number_len < chunk_end && !is_delim(p->buf[i]))
+			return (false);
+		if (!realloc_all(p, fdf))
+			return (false);
+		push_value(p, fdf);
 		while (i < chunk_end && p->buf[i] == ' ')
 			++i;
 		if (((i == chunk_end && p->bytes_read == 0) || p->buf[i] == '\n')

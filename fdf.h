@@ -44,6 +44,7 @@ typedef struct s_parser
 	ssize_t			bytes_read;
 	size_t			values_read;
 	size_t			arr_capacity;
+	uint32_t		color;
 	int				x;
 	int				y;
 	int				z;
@@ -51,6 +52,7 @@ typedef struct s_parser
 	int				max_z;
 	bool			z_set;
 	bool			width_set;
+	bool			has_color;
 }	t_parser;
 
 typedef struct s_point4
@@ -77,7 +79,7 @@ typedef enum e_matrices
 
 typedef enum e_projection
 {
-	PERSPECTIVE_ORTHO,
+	PROJECTION_ORTHO,
 	PERSPECTIVE_CONICAL,
 }	t_projection;
 
@@ -126,6 +128,11 @@ typedef struct s_bresenham_state
 	int				p1[3];
 	int				p2[3];
 	int				error_count;
+	uint32_t		color1;
+	uint32_t		color2;
+	float			color_r_delta;
+	float			color_g_delta;
+	float			color_b_delta;
 }	t_bresenham_state;
 
 typedef struct s_renderer
@@ -151,7 +158,8 @@ typedef enum e_input_state
 
 typedef struct s_fdf
 {
-	t_point4				*points;
+	uint32_t				*color;
+	float					*points;
 	t_point4				*transformed_points;
 	int						(*edges)[2];
 	int						width;
@@ -167,6 +175,7 @@ typedef struct s_fdf
 	t_transformation_stack	transformation_stack;
 	t_input_state			input_state;
 	int						drag_start[2];
+	bool					has_color;
 }	t_fdf;
 
 /*
@@ -256,6 +265,7 @@ void	transformation_update_projection(t_transformation_stack *t);
  * UTIL
  */
 int		ft_strntoi(int *n, char *str, size_t max);
+bool	strntohex(uint32_t *n, char *str, char *end);
 bool	ft_realloc(void **ptr, size_t *cap, size_t start);
 
 #endif
