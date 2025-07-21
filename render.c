@@ -13,7 +13,7 @@
 #include <immintrin.h>
 #include <stdint.h>
 #include <time.h>
-#include <mlx/mlx.h>
+#include <mlx.h>
 #include <stdbool.h>
 #include "fdf.h"
 #include "libft/libft.h"

@@ -65,11 +65,11 @@ typedef struct s_point4
 typedef enum e_matrices
 {
 	M_PROJECTION,
+	M_VIEW_ROTATE_X2,
 	M_TB,
 	M_ROTATION_Z,
 	M_ROTATION_X,
 	M_ROTATION_Y,
-	M_VIEW_ROTATE_Y,
 	M_VIEW_ROTATE_X,
 	M_VIEW_ROTATE_Z,
 	M_ORIGIN,
@@ -107,7 +107,7 @@ typedef struct s_transformation_stack
 	bool				dirty[M_COUNT];
 	t_projection_ctl	projection;
 	float				px;
-	float				py;
+	float				px2;
 	float				pz;
 	float				rx;
 	float				ry;
@@ -221,6 +221,11 @@ void	matrix4_translate(
 			float delta_y,
 			float delta_z
 			);
+void	matrix4_dot_product(
+	float *m,
+	float *a,
+	float *out
+	);
 
 /*
  * TRANSFORMATION STACK
@@ -230,8 +235,9 @@ void	transformation_stack_rotate_x(t_transformation_stack *t, float dx);
 void	transformation_stack_rotate_y(t_transformation_stack *t, float dy);
 void	transformation_stack_rotate_z(t_transformation_stack *t, float dz);
 void	transformation_stack_rview_x(t_transformation_stack *t, float dx);
-void	transformation_stack_rview_y(t_transformation_stack *t, float dy);
+void	transformation_stack_rview_x2(t_transformation_stack *t, float dx);
 void	transformation_stack_rview_z(t_transformation_stack *t, float dz);
+void	transformation_stack_isometric(t_transformation_stack *t);
 void	transformation_stack_update(t_transformation_stack *t);
 void	transformation_stack_ortho(
 			t_transformation_stack *t,
@@ -249,8 +255,7 @@ void	transformation_stack_translate(
 void	transformation_stack_pan(
 			t_transformation_stack *t,
 			float dx,
-			float dy,
-			float dz
+			float dy
 			);
 void	transformation_stack_origin(
 			t_transformation_stack *t,

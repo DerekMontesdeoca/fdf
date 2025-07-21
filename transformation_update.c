@@ -19,8 +19,8 @@ static inline void	update_rotations(t_transformation_stack *t)
 {
 	if (t->dirty[M_VIEW_ROTATE_X])
 		matrix4_rotate_x_abs(t->results[M_VIEW_ROTATE_X], t->px);
-	if (t->dirty[M_VIEW_ROTATE_Y])
-		matrix4_rotate_y_abs(t->results[M_VIEW_ROTATE_Y], t->py);
+	if (t->dirty[M_VIEW_ROTATE_X2])
+		matrix4_rotate_x_abs(t->results[M_VIEW_ROTATE_X2], t->px2);
 	if (t->dirty[M_VIEW_ROTATE_Z])
 		matrix4_rotate_z_abs(t->results[M_VIEW_ROTATE_Z], t->pz);
 	if (t->dirty[M_ROTATION_X])

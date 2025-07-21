@@ -13,7 +13,7 @@
 #include <tgmath.h>
 #include <X11/keysym.h>
 #include <X11/Xlib.h>
-#include "mlx/mlx.h"
+#include "mlx.h"
 #include "fdf.h"
 
 #define ROTATE_FACTOR 0.09f
@@ -69,7 +69,7 @@ int	motion_handler(int x, int y, t_fdf *fdf)
 	if (fdf->input_state == INPUT_STATE_DRAGGING)
 	{
 		transformation_stack_pan(&fdf->transformation_stack,
-			ndcx * (proj->l - proj->r), ndcy * (proj->b - proj->t), 0);
+			ndcx * (proj->l - proj->r), ndcy * (proj->b - proj->t));
 		fdf->drag_start[0] = x;
 		fdf->drag_start[1] = y;
 	}

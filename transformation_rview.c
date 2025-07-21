@@ -18,10 +18,10 @@ void	transformation_stack_rview_x(t_transformation_stack *t, float dx)
 	t->px += dx;
 }
 
-void	transformation_stack_rview_y(t_transformation_stack *t, float dy)
+void	transformation_stack_rview_x2(t_transformation_stack *t, float dx)
 {
-	t->dirty[M_VIEW_ROTATE_Y] = true;
-	t->py += dy;
+	t->dirty[M_VIEW_ROTATE_X2] = true;
+	t->px2 += dx;
 }
 
 void	transformation_stack_rview_z(t_transformation_stack *t, float dz)

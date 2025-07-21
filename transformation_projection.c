@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   transformation_perspective.c                       :+:      :+:    :+:   */
+/*   transformation_projection.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dmontesd <dmontesd@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,7 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <math.h>
+
 #include "fdf.h"
+#define ISOMETRIC_ANGLE 0.6155f
 
 void	transformation_stack_ortho(
 	t_transformation_stack *t,
@@ -23,4 +26,16 @@ void	transformation_stack_ortho(
 	t->projection.box[0] = x;
 	t->projection.box[1] = y;
 	t->projection.box[2] = z;
+}
+
+void	transformation_stack_isometric(t_transformation_stack *t)
+{
+	transformation_stack_rview_z(t, M_PI_4);
+	transformation_stack_rview_x(t, M_PI_2);
+	transformation_stack_rview_x2(t, -ISOMETRIC_ANGLE);
+}
+
+void	transformation_stack_parallel(t_transformation_stack *t)
+{
+	(void) t;
 }

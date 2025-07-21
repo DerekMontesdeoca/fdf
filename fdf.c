@@ -15,11 +15,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <mlx/mlx.h>
+#include <mlx.h>
 #include <X11/X.h>
 #include "libft/libft.h"
 
-#define ISOMETRIC_ANGLE 0.6155f
+static inline void	center_model(t_transformation_stack *t, float height)
+{
+	float	vec[4];
+	float	result[4];
+	float	top;
+
+	ft_memset(vec, 0 , sizeof(vec));
+	vec[1] = 0;
+	vec[2] = t->tz;
+	matrix4_dot_product(t->combined, vec, result);
+	top = result[1];
+	ft_memset(vec, 0 , sizeof(vec));
+	vec[1] = -height;
+	vec[2] = t->tz;
+	matrix4_dot_product(t->combined, vec, result);
+	transformation_stack_pan(t, 0, (top + result[1]) / 2);
+}
 
 static inline void	init_transformation_stack(t_fdf *f)
 {
@@ -29,9 +45,6 @@ static inline void	init_transformation_stack(t_fdf *f)
 	bounding_box = fmaxf(fmaxf((float)f->width, (float)f->height),
 			(float) f->max_z - (float) f->min_z);
 	with_margin = bounding_box * 2.0f;
-	transformation_stack_rview_z(&f->transformation_stack, M_PI_4);
-	transformation_stack_rview_x(&f->transformation_stack, M_PI_2);
-	transformation_stack_rview_x(&f->transformation_stack, -ISOMETRIC_ANGLE);
 	transformation_stack_origin(&f->transformation_stack,
 		-((float)f->width / 2), -((float)f->height / 2),
 		-(float)(f->min_z + f->max_z) / 2.0f);
@@ -39,6 +52,9 @@ static inline void	init_transformation_stack(t_fdf *f)
 		-with_margin / 2.0f);
 	transformation_stack_ortho(&f->transformation_stack,
 		with_margin, with_margin, with_margin);
+	transformation_stack_isometric(&f->transformation_stack);
+	transformation_stack_update(&f->transformation_stack);
+	center_model(&f->transformation_stack, (float)(f->max_z - f->min_z));
 }
 
 static inline void	init_mlx_handlers(t_fdf *f)

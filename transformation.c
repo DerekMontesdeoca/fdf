@@ -56,11 +56,8 @@ void	transformation_stack_translate(
 	t->tz += dz;
 }
 
-void	transformation_stack_pan(
-	t_transformation_stack *t,
-	float dx, float dy, float dz
-) {
-	(void)dz;
+void	transformation_stack_pan( t_transformation_stack *t, float dx, float dy)
+{
 	t->dirty[M_PROJECTION] = true;
 	t->projection.pan_x += dx;
 	t->projection.pan_y += dy;

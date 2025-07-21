@@ -13,7 +13,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <mlx/mlx.h>
+#include <mlx.h>
 #include "fdf.h"
 #include "libft/libft.h"
 
