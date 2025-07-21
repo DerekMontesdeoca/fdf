@@ -29,9 +29,9 @@ static inline void	init_transformation_stack(t_fdf *f)
 	bounding_box = fmaxf(fmaxf((float)f->width, (float)f->height),
 			(float) f->max_z - (float) f->min_z);
 	with_margin = bounding_box * 2.0f;
-	// transformation_stack_rview_y(&f->transformation_stack, ISOMETRIC_ANGLE);
 	transformation_stack_rview_z(&f->transformation_stack, M_PI_4);
-	transformation_stack_rview_x(&f->transformation_stack, M_PI_2 - ISOMETRIC_ANGLE);
+	transformation_stack_rview_x(&f->transformation_stack, M_PI_2);
+	transformation_stack_rview_x(&f->transformation_stack, -ISOMETRIC_ANGLE);
 	transformation_stack_origin(&f->transformation_stack,
 		-((float)f->width / 2), -((float)f->height / 2),
 		-(float)(f->min_z + f->max_z) / 2.0f);
@@ -39,17 +39,6 @@ static inline void	init_transformation_stack(t_fdf *f)
 		-with_margin / 2.0f);
 	transformation_stack_ortho(&f->transformation_stack,
 		with_margin, with_margin, with_margin);
-	// color init
-	if (!f->has_color)
-	{
-		float delta = 100.0f / (float)(f->max_z - f->min_z);
-		int i = 0;
-		while (i < f->width * f->height)
-		{
-			f->color[i] = (uint32_t)(delta * f->points[i] + 155.0f) << 8;
-			++i;
-		}
-	}
 }
 
 static inline void	init_mlx_handlers(t_fdf *f)

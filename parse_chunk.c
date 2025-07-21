@@ -44,9 +44,7 @@ static bool	advance_line(t_parser *p, t_fdf *fdf)
 
 static inline void	push_value(t_parser *p, t_fdf *fdf)
 {
-
-	if (p->has_color)
-		fdf->color[p->values_read] = p->color;
+	fdf->color[p->values_read] = p->color;
 	fdf->points[p->values_read] = (float)p->z;
 	if (!p->z_set || p->z < p->min_z)
 		p->min_z = p->z;
@@ -85,16 +83,17 @@ static bool realloc_all(t_parser *p, t_fdf *fdf)
 
 static inline bool	parse_color(t_parser *p, size_t chunk_end, size_t *i)
 {
-	if (p->has_color || (*i < chunk_end && p->buf[*i] == ','))
+	if (*i < chunk_end && p->buf[*i] == ',')
 	{
 		if (*i == chunk_end || p->buf[*i] != ',')
 			return (false);
 		++*i;
-		p->has_color = true;
 		if (!strntohex(&p->color, &p->buf[*i], p->buf + chunk_end))
 			return (false);
 		*i += 8;
 	}
+	else
+		p->color = 0xffffff;
 	return (true);
 }
 

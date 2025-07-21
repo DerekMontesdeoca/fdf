@@ -88,7 +88,6 @@ static inline bool	parse_buffered(t_parser *p, t_fdf *fdf, int fd)
 	}
 	fdf->min_z = p->min_z;
 	fdf->max_z = p->max_z;
-	fdf->has_color = p->has_color;
 	return (true);
 }
 

@@ -52,7 +52,6 @@ typedef struct s_parser
 	int				max_z;
 	bool			z_set;
 	bool			width_set;
-	bool			has_color;
 }	t_parser;
 
 typedef struct s_point4
