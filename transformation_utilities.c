@@ -4,6 +4,14 @@
 
 // static inline void	center_model(t_transformation_stack *t, float height)
 // {
+// 	t->projection.box[0] / 2;
+// 	t->projection.box[1] / 2;
+// 	t->projection.box[2] / 2;
+// 	transformation_stack_pan()
+// }
+
+// static inline void	center_model(t_transformation_stack *t, float height)
+// {
 // 	float	vec[4];
 // 	float	result[4];
 // 	float	top;
@@ -19,4 +27,3 @@
 // 	matrix4_dot_product(t->combined, vec, result);
 // 	transformation_stack_pan(t, 0, top-vec[1]/2);
 // }
-

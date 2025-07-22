@@ -103,7 +103,7 @@ void	bresenham_init(
 	b->p1[2] = (int) fminf(fmaxf(((p1->z + 1) / 2.0f * 255.0f) + 50, 150), 255);
 	b->p2[0] = (int) ((p2->x + 1) / 2 * WINDOW_WIDTH);
 	b->p2[1] = (int) ((1 - p2->y) / 2 * WINDOW_HEIGHT);
-	b->p2[2] = (int) fminf(fmax(((p2->z + 1) / 2.0f * 255.0f) + 50, 150), 255);
+	b->p2[2] = (int) fminf(fmaxf(((p2->z + 1) / 2.0f * 255.0f) + 50, 150), 255);
 	b->delta[0] = b->p2[0] - b->p1[0];
 	b->delta[1] = b->p2[1] - b->p1[1];
 	b->delta[2] = b->p2[2] - b->p1[2];
@@ -143,7 +143,8 @@ void	draw_lines(t_fdf *f)
 	{
 		if (test_out(&f->transformed_points[f->edges[i][0]], &f->transformed_points[f->edges[i][1]]))
 		{
-			i = i + (size_t) fmaxf(log2f(f->transformation_stack.projection.zoom_factor * 10.0f), 1.0f);
+			++i;
+			// i = i + (size_t) fmaxf(log2f(f->transformation_stack.projection.zoom_factor * 10.0f), 1.0f);
 			continue ;
 		}
 		bresenham_init(&f->bresenham_state, f, i);

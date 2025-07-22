@@ -18,32 +18,32 @@
 static inline void	update_rotations(t_transformation_stack *t)
 {
 	if (t->dirty[M_VIEW_ROTATE_X])
-		matrix4_rotate_x_abs(t->results[M_VIEW_ROTATE_X], t->px);
+		matrix4_rotate_x_abs(t->matrices[M_VIEW_ROTATE_X], t->px);
 	if (t->dirty[M_VIEW_ROTATE_X2])
-		matrix4_rotate_x_abs(t->results[M_VIEW_ROTATE_X2], t->px2);
+		matrix4_rotate_x_abs(t->matrices[M_VIEW_ROTATE_X2], t->px2);
 	if (t->dirty[M_VIEW_ROTATE_Z])
-		matrix4_rotate_z_abs(t->results[M_VIEW_ROTATE_Z], t->pz);
+		matrix4_rotate_z_abs(t->matrices[M_VIEW_ROTATE_Z], t->pz);
 	if (t->dirty[M_ROTATION_X])
-		matrix4_rotate_x_abs(t->results[M_ROTATION_X], t->rx);
+		matrix4_rotate_x_abs(t->matrices[M_ROTATION_X], t->rx);
 	if (t->dirty[M_ROTATION_Y])
-		matrix4_rotate_y_abs(t->results[M_ROTATION_Y], t->ry);
+		matrix4_rotate_y_abs(t->matrices[M_ROTATION_Y], t->ry);
 	if (t->dirty[M_ROTATION_Z])
-		matrix4_rotate_x_abs(t->results[M_ROTATION_Z], t->rz);
+		matrix4_rotate_x_abs(t->matrices[M_ROTATION_Z], t->rz);
 }
 
 static inline void	update_translation(t_transformation_stack *t)
 {
 	if (t->dirty[M_TB])
 	{
-		t->results[M_TB][3] = t->tx;
-		t->results[M_TB][7] = t->ty;
-		t->results[M_TB][11] = t->tz;
+		t->matrices[M_TB][3] = t->tx;
+		t->matrices[M_TB][7] = t->ty;
+		t->matrices[M_TB][11] = t->tz;
 	}
 	if (t->dirty[M_ORIGIN])
 	{
-		t->results[M_ORIGIN][3] = t->ox;
-		t->results[M_ORIGIN][7] = t->oy;
-		t->results[M_ORIGIN][11] = t->oz;
+		t->matrices[M_ORIGIN][3] = t->ox;
+		t->matrices[M_ORIGIN][7] = t->oy;
+		t->matrices[M_ORIGIN][11] = t->oz;
 	}
 }
 
@@ -62,15 +62,15 @@ static inline void	update_projection(t_transformation_stack *t)
 		p->b = p->box[1] / 2 * p->zoom_factor + p->pan_y;
 		p->n = 0.1f;
 		p->f = p->box[2];
-		identity_matrix4(t->results[M_PROJECTION]);
-		t->results[M_PROJECTION][0] = 2.0f / (p->r - p->l);
-		t->results[M_PROJECTION][5] = 2.0f / (p->t - p->b);
-		t->results[M_PROJECTION][10] = -2.0f / (p->f - p->n);
-		t->results[M_PROJECTION][3] = -(p->r + p->l)
+		identity_matrix4(t->matrices[M_PROJECTION]);
+		t->matrices[M_PROJECTION][0] = 2.0f / (p->r - p->l);
+		t->matrices[M_PROJECTION][5] = 2.0f / (p->t - p->b);
+		t->matrices[M_PROJECTION][10] = -2.0f / (p->f - p->n);
+		t->matrices[M_PROJECTION][3] = -(p->r + p->l)
 			/ (p->r - p->l);
-		t->results[M_PROJECTION][7] = -(p->t + p->b)
+		t->matrices[M_PROJECTION][7] = -(p->t + p->b)
 			/ (p->t - p->b);
-		t->results[M_PROJECTION][11] = -(p->f + p->n)
+		t->matrices[M_PROJECTION][11] = -(p->f + p->n)
 			/ (p->f - p->n);
 	}
 	else
@@ -89,11 +89,11 @@ static inline void	recompute_final_transformation(t_transformation_stack *t)
 		pingpong[0] = t->combined;
 		pingpong[1] = t->temp;
 	}
-	ft_memcpy(pingpong[0], t->results[0], sizeof(float [16]));
+	ft_memcpy(pingpong[0], t->matrices[0], sizeof(float [16]));
 	i = 0;
 	while (i < M_COUNT - 1)
 	{
-		matrix4_multiply(pingpong[i & 1], t->results[i + 1],
+		matrix4_multiply(pingpong[i & 1], t->matrices[i + 1],
 			pingpong[!(i & 1)]);
 		++i;
 	}

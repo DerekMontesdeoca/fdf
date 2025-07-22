@@ -55,7 +55,7 @@ static inline void	push_value(t_parser *p, t_fdf *fdf)
 	++p->x;
 }
 
-static inline int	skip_to_delim(char *buf, int end, int i)
+static inline int	skip_delim(char *buf, int end, int i)
 {
 	while (i < end && is_delim(buf[i]))
 		++i;
@@ -81,23 +81,26 @@ static bool realloc_all(t_parser *p, t_fdf *fdf)
 	return (true);
 }
 
-static inline bool	parse_color(t_parser *p, size_t chunk_end, size_t *i)
+static inline bool	parse_color(t_parser *p, size_t chunk_size, size_t *i)
 {
-	if (*i < chunk_end && p->buf[*i] == ',')
+	int	hex_len;
+
+	if (*i < chunk_size && p->buf[*i] == ',')
 	{
-		if (*i == chunk_end || p->buf[*i] != ',')
+		if (*i == chunk_size || p->buf[*i] != ',')
 			return (false);
 		++*i;
-		if (!strntohex(&p->color, &p->buf[*i], p->buf + chunk_end))
+		hex_len = strntohex(&p->color, &p->buf[*i], p->buf + chunk_size);
+		if (hex_len == 0)
 			return (false);
-		*i += 8;
+		*i += hex_len;
 	}
 	else
 		p->color = 0xffffff;
 	return (true);
 }
 
-bool	parse_chunk(t_parser *p, t_fdf *fdf, size_t chunk_end)
+bool	parse_chunk(t_parser *p, t_fdf *fdf, size_t chunk_size)
 {
 	size_t	i;
 	int		number_len;
@@ -105,23 +108,23 @@ bool	parse_chunk(t_parser *p, t_fdf *fdf, size_t chunk_end)
 	i = 0;
 	while (true)
 	{
-		i = skip_to_delim(p->buf, chunk_end, i);
-		if (i == chunk_end)
+		i = skip_delim(p->buf, chunk_size, i);
+		if (i == chunk_size)
 			break ;
-		number_len = ft_strntoi(&p->z, &p->buf[i], chunk_end - i);
+		number_len = ft_strntoi(&p->z, &p->buf[i], chunk_size - i);
 		if (number_len == 0)
 			return (false);
 		i += number_len;
-		if (!parse_color(p, chunk_end, &i))
+		if (!parse_color(p, chunk_size, &i))
 			return (false);
-		if (i + number_len < chunk_end && !is_delim(p->buf[i]))
+		if (i + number_len < chunk_size && !is_delim(p->buf[i]))
 			return (false);
 		if (!realloc_all(p, fdf))
 			return (false);
 		push_value(p, fdf);
-		while (i < chunk_end && p->buf[i] == ' ')
+		while (i < chunk_size && p->buf[i] == ' ')
 			++i;
-		if (((i == chunk_end && p->bytes_read == 0) || p->buf[i] == '\n')
+		if (((i == chunk_size && p->bytes_read == 0) || p->buf[i] == '\n')
 			&& !advance_line(p, fdf))
 			return (false);
 	}

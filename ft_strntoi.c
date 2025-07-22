@@ -16,6 +16,7 @@
 #include "libft/libft.h"
 
 #define CUTOFF 214748364
+#define HEXTABLE "0123456789abcdef"
 
 static inline bool	ft_is_negative(const char *str, size_t *i, size_t max)
 {
@@ -71,31 +72,33 @@ static inline bool	skip_prefix(char **str, char *end)
 	return (true);
 }
 
-bool strntohex(uint32_t *n, char *str, char *end)
+int strntohex(uint32_t *n, char *str, char *end)
 {
-	static const char	*hex = "0123456789abcdef";
 	uint32_t			num;
 	char				*found;
 	int					i;
+	bool				done;
 
-	if (!skip_prefix(&str, end))
-		return (false);
-	if (str == end)
+	if (!skip_prefix(&str, end) || str == end)
 		return (false);
 	num = 0;
 	i = 0;
-	while (i < 6)
+	done = false;
+	while (i < 8)
 	{
-		if (str == end)
-			return (false);
-		found = ft_strchr(hex, ft_tolower(*str));
+		found = ft_strchr(HEXTABLE, ft_tolower(*str));
 		if (!found)
-			return (false);
+		{
+			done = true;
+			break;
+		}
 		num <<= 4;
-		num |= (found - hex);
+		num |= (found - HEXTABLE);
 		++i;
 		++str;
 	}
+	if (!done)
+		return (0);
 	*n = num;
-	return (true);
+	return (i + 2);
 }

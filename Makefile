@@ -23,7 +23,7 @@ $(LIBFT):
 	$(MAKE) -C $(dir $(LIBFT))
 
 $(MLX):
-	cd $(dir $(MLX)) && ./configure
+	cd $(dir $(MLX))
 	$(MAKE) -C $(dir $(MLX))
 
 %.o: %.c $(HEADERS)

@@ -101,7 +101,6 @@ typedef struct s_projection_ctl
 typedef struct s_transformation_stack
 {
 	float				matrices[M_COUNT][16];
-	float				results[M_COUNT][16];
 	float				temp[16];
 	float				combined[16];
 	bool				dirty[M_COUNT];
@@ -204,7 +203,7 @@ void	update_timer(t_renderer *r);
 /*
  * PARSE INPUT
  */
-bool	parse_chunk(t_parser *p, t_fdf *fdf, size_t chunk_end);
+bool	parse_chunk(t_parser *p, t_fdf *fdf, size_t chunk_size);
 
 /*
  * MATRIX
@@ -283,7 +282,7 @@ void	make_projection_ctl(
  * UTIL
  */
 int		ft_strntoi(int *n, char *str, size_t max);
-bool	strntohex(uint32_t *n, char *str, char *end);
+int		strntohex(uint32_t *n, char *str, char *end);
 bool	ft_realloc(void **ptr, size_t *cap, size_t start);
 
 #endif

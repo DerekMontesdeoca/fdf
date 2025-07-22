@@ -40,7 +40,6 @@ void	make_transformation_stack(t_transformation_stack *t)
 	{
 		t->dirty[i] = true;
 		identity_matrix4(t->matrices[i]);
-		identity_matrix4(t->results[i]);
 		++i;
 	}
 }
