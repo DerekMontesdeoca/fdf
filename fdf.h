@@ -79,7 +79,7 @@ typedef enum e_matrices
 typedef enum e_projection
 {
 	PROJECTION_ORTHO,
-	PERSPECTIVE_CONICAL,
+	PROJECTION_PARALLEL
 }	t_projection;
 
 typedef struct s_projection_ctl
@@ -231,13 +231,18 @@ void	matrix4_dot_product(
  * TRANSFORMATION STACK
  */
 void	make_transformation_stack(t_transformation_stack *t);
+
 void	transformation_stack_rotate_x(t_transformation_stack *t, float dx);
 void	transformation_stack_rotate_y(t_transformation_stack *t, float dy);
 void	transformation_stack_rotate_z(t_transformation_stack *t, float dz);
+
 void	transformation_stack_rview_x(t_transformation_stack *t, float dx);
 void	transformation_stack_rview_x2(t_transformation_stack *t, float dx);
 void	transformation_stack_rview_z(t_transformation_stack *t, float dz);
+
 void	transformation_stack_isometric(t_transformation_stack *t);
+void	transformation_stack_parallel();
+
 void	transformation_stack_update(t_transformation_stack *t);
 void	transformation_stack_ortho(
 			t_transformation_stack *t,
@@ -263,7 +268,16 @@ void	transformation_stack_origin(
 			float dy,
 			float dz
 			);
-void	transformation_update_projection(t_transformation_stack *t);
+
+/*
+ * PROJECTION CTL
+ */
+void	make_projection_ctl(
+			t_projection_ctl *p,
+			float width,
+			float height,
+			float depth
+			);
 
 /*
  * UTIL

@@ -47,6 +47,36 @@ static inline void	update_translation(t_transformation_stack *t)
 	}
 }
 
+static inline void	update_projection(t_transformation_stack *t)
+{
+	t_projection_ctl	*p;
+
+	if (!t->dirty[M_PROJECTION])
+		return ;
+	if (t->projection.type == PROJECTION_ORTHO)
+	{
+		p = &t->projection;
+		p->l = -p->box[0] / 2 * p->zoom_factor + p->pan_x;
+		p->r = p->box[0] / 2 * p->zoom_factor + p->pan_x;
+		p->t = -p->box[1] / 2 * p->zoom_factor + p->pan_y;
+		p->b = p->box[1] / 2 * p->zoom_factor + p->pan_y;
+		p->n = 0.1f;
+		p->f = p->box[2];
+		identity_matrix4(t->results[M_PROJECTION]);
+		t->results[M_PROJECTION][0] = 2.0f / (p->r - p->l);
+		t->results[M_PROJECTION][5] = 2.0f / (p->t - p->b);
+		t->results[M_PROJECTION][10] = -2.0f / (p->f - p->n);
+		t->results[M_PROJECTION][3] = -(p->r + p->l)
+			/ (p->r - p->l);
+		t->results[M_PROJECTION][7] = -(p->t + p->b)
+			/ (p->t - p->b);
+		t->results[M_PROJECTION][11] = -(p->f + p->n)
+			/ (p->f - p->n);
+	}
+	else
+		assert(false && "Unreachable code");
+}
+
 static inline void	recompute_final_transformation(t_transformation_stack *t)
 {
 	float	*pingpong[2];
@@ -77,7 +107,7 @@ void	transformation_stack_update(t_transformation_stack *t)
 
 	update_rotations(t);
 	update_translation(t);
-	transformation_update_projection(t);
+	update_projection(t);
 	should_update = false;
 	i = 0;
 	while (i < M_COUNT)

@@ -19,42 +19,22 @@
 #include <X11/X.h>
 #include "libft/libft.h"
 
-static inline void	center_model(t_transformation_stack *t, float height)
-{
-	float	vec[4];
-	float	result[4];
-	float	top;
-
-	ft_memset(vec, 0 , sizeof(vec));
-	vec[1] = 0;
-	vec[2] = t->tz;
-	matrix4_dot_product(t->combined, vec, result);
-	top = result[1];
-	ft_memset(vec, 0 , sizeof(vec));
-	vec[1] = -height;
-	vec[2] = t->tz;
-	matrix4_dot_product(t->combined, vec, result);
-	transformation_stack_pan(t, 0, (top + result[1]) / 2);
-}
-
 static inline void	init_transformation_stack(t_fdf *f)
 {
-	float	bounding_box;
-	float	with_margin;
+	t_projection_ctl *projection;
 
-	bounding_box = fmaxf(fmaxf((float)f->width, (float)f->height),
-			(float) f->max_z - (float) f->min_z);
-	with_margin = bounding_box * 2.0f;
+	f->transformation_stack.dirty[M_PROJECTION] = true;
+	projection = &f->transformation_stack.projection;
+	projection->type = PROJECTION_ORTHO;
 	transformation_stack_origin(&f->transformation_stack,
 		-((float)f->width / 2), -((float)f->height / 2),
 		-(float)(f->min_z + f->max_z) / 2.0f);
-	transformation_stack_translate(&f->transformation_stack, 0, 0,
-		-with_margin / 2.0f);
-	transformation_stack_ortho(&f->transformation_stack,
-		with_margin, with_margin, with_margin);
 	transformation_stack_isometric(&f->transformation_stack);
+	make_projection_ctl(projection, f->width, f->height, f->max_z - f->min_z);
+	transformation_stack_translate(&f->transformation_stack, 0, 0,
+		-projection->box[2] / 2.0f);
 	transformation_stack_update(&f->transformation_stack);
-	center_model(&f->transformation_stack, (float)(f->max_z - f->min_z));
+	// center_model(&f->transformation_stack, (float)(f->max_z - f->min_z));
 }
 
 static inline void	init_mlx_handlers(t_fdf *f)

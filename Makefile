@@ -9,7 +9,7 @@ SRC := main.c matrix4.c handlers.c transformation.c transformation_rotation.c \
 	   transformation_update.c transformation_projection.c ft_strntoi.c \
 	   parse.c realloc.c parse_chunk.c fdf.c render.c fdf_init_edges.c \
 	   transformation_rview.c bresenham.c render_string.c time.c \
-	   transformation_update_projection.c matrix4_vector.c
+	   matrix4_vector.c projection_ctl.c transformation_utilities.c
 OBJS := $(SRC:.c=.o)
 LIBFT := libft/libft.a
 MLX := minilibx-linux/libmlx_Linux.a
