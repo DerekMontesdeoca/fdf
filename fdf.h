@@ -6,7 +6,7 @@
 /*   By: dmontesd <dmontesd@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 15:51:48 by dmontesd          #+#    #+#             */
-/*   Updated: 2025/07/23 23:30:10 by dmontesd         ###   ########.fr       */
+/*   Updated: 2025/07/24 00:16:13 by dmontesd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,6 +196,10 @@ void		update_timer(t_renderer *r);
  * PARSE INPUT
  */
 bool		parse_chunk(t_parser *p, t_fdf *fdf, size_t chunk_size);
+bool		realloc_all(t_parser *p, t_fdf *fdf);
+bool		parse_color(t_parser *p, size_t chunk_size, size_t *i);
+bool		is_delim(char c);
+int			skip_delim(char *buf, int end, int i);
 
 /*
  * MATRIX

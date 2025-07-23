@@ -6,7 +6,7 @@
 /*   By: dmontesd <dmontesd@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 18:25:53 by dmontesd          #+#    #+#             */
-/*   Updated: 2025/07/15 18:26:00 by dmontesd         ###   ########.fr       */
+/*   Updated: 2025/07/24 00:16:51 by dmontesd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,6 @@
 #include "libft/libft.h"
 
 #define INPUT_BUF_SIZE 4096
-
-static inline bool	is_delim(char c)
-{
-	return (c == ' ' || c == '\n');
-}
 
 static inline bool	find_chunk_end(
 	t_parser *p,

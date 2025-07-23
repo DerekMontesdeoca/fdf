@@ -6,7 +6,7 @@
 /*   By: dmontesd <dmontesd@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 21:58:07 by dmontesd          #+#    #+#             */
-/*   Updated: 2025/07/23 23:47:50 by dmontesd         ###   ########.fr       */
+/*   Updated: 2025/07/24 00:18:14 by dmontesd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,30 +14,6 @@
 #include <unistd.h>
 #include "fdf.h"
 #include "libft/libft.h"
-
-static bool	realloc_all(t_parser *p, t_fdf *fdf)
-{
-	size_t	capacity;
-
-	if (p->values_read >= p->arr_capacity)
-	{
-		capacity = sizeof(float [p->arr_capacity]);
-		if (!ft_realloc((void **) &fdf->points, &capacity,
-				sizeof(float [4096])))
-			return (false);
-		capacity = sizeof(uint32_t[p->arr_capacity]);
-		if (!ft_realloc((void **) &fdf->color, &capacity,
-				sizeof(uint32_t [4096])))
-			return (false);
-		p->arr_capacity = capacity / sizeof(*fdf->color);
-	}
-	return (true);
-}
-
-static inline bool	is_delim(char c)
-{
-	return (c == ' ' || c == '\n');
-}
 
 static bool	advance_line(t_parser *p, t_fdf *fdf)
 {
@@ -49,7 +25,12 @@ static bool	advance_line(t_parser *p, t_fdf *fdf)
 		p->width_set = true;
 		fdf->width = (int)p->values_read;
 	}
-	else if ((size_t)p->y * fdf->width != p->values_read)
+	else if (p->values_read > (size_t)p->y * fdf->width)
+	{
+		ft_fprintf(STDERR_FILENO, "Error: Bad map\n");
+		return (false);
+	}
+	else if (p->values_read < (size_t)p->y * fdf->width)
 	{
 		if (!realloc_all(p, fdf))
 			return (false);
@@ -76,36 +57,27 @@ static inline void	push_value(t_parser *p, t_fdf *fdf)
 	++p->x;
 }
 
-static inline int	skip_delim(char *buf, int end, int i)
-{
-	while (i < end && is_delim(buf[i]))
-		++i;
-	return (i);
-}
+static inline bool	parse_value(
+	t_parser *p,
+	size_t chunk_size,
+	size_t *i
+) {
+	int		number_len;
 
-static inline bool	parse_color(t_parser *p, size_t chunk_size, size_t *i)
-{
-	int	hex_len;
-
-	if (*i < chunk_size && p->buf[*i] == ',')
-	{
-		if (*i == chunk_size || p->buf[*i] != ',')
-			return (false);
-		++*i;
-		hex_len = strntohex(&p->color, &p->buf[*i], p->buf + chunk_size);
-		if (hex_len == 0)
-			return (false);
-		*i += hex_len;
-	}
-	else
-		p->color = 0xffffff;
+	number_len = ft_strntoi(&p->z, &p->buf[*i], chunk_size - *i);
+	if (number_len == 0)
+		return (false);
+	*i += number_len;
+	if (!parse_color(p, chunk_size, i))
+		return (false);
+	if (*i + number_len < chunk_size && !is_delim(p->buf[*i]))
+		return (false);
 	return (true);
 }
 
 bool	parse_chunk(t_parser *p, t_fdf *fdf, size_t chunk_size)
 {
 	size_t	i;
-	int		number_len;
 
 	i = 0;
 	while (true)
@@ -113,13 +85,7 @@ bool	parse_chunk(t_parser *p, t_fdf *fdf, size_t chunk_size)
 		i = skip_delim(p->buf, chunk_size, i);
 		if (i == chunk_size)
 			break ;
-		number_len = ft_strntoi(&p->z, &p->buf[i], chunk_size - i);
-		if (number_len == 0)
-			return (false);
-		i += number_len;
-		if (!parse_color(p, chunk_size, &i))
-			return (false);
-		if (i + number_len < chunk_size && !is_delim(p->buf[i]))
+		if (!parse_value(p, chunk_size, &i))
 			return (false);
 		if (!realloc_all(p, fdf))
 			return (false);
