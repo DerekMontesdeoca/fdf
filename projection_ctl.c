@@ -1,6 +1,5 @@
 #include <math.h>
 #include "fdf.h"
-#include "libft/libft.h"
 
 void	make_projection_ctl(
 	t_projection_ctl *p,

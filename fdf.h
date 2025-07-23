@@ -267,6 +267,12 @@ void	transformation_stack_origin(
 			float dy,
 			float dz
 			);
+void	center_model(
+			t_transformation_stack *t,
+			float width,
+			float height,
+			float depth
+			);
 
 /*
  * PROJECTION CTL

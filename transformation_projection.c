@@ -20,7 +20,7 @@ void	transformation_stack_isometric(t_transformation_stack *t)
 	(void) t;
 	transformation_stack_rview_z(t, M_PI_4);
 	transformation_stack_rview_x(t, M_PI_2);
-	transformation_stack_rview_x2(t, ISOMETRIC_ANGLE);
+	transformation_stack_rview_x2(t, -ISOMETRIC_ANGLE);
 }
 
 void	transformation_stack_parallel(t_transformation_stack *t)

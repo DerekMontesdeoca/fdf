@@ -34,7 +34,8 @@ static inline void	init_transformation_stack(t_fdf *f)
 	transformation_stack_translate(&f->transformation_stack, 0, 0,
 		-projection->box[2] / 2.0f);
 	transformation_stack_update(&f->transformation_stack);
-	// center_model(&f->transformation_stack, (float)(f->max_z - f->min_z));
+	center_model( &f->transformation_stack, f->width, f->height,
+		(float)(f->max_z - f->min_z));
 }
 
 static inline void	init_mlx_handlers(t_fdf *f)

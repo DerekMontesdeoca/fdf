@@ -76,9 +76,9 @@ int	motion_handler(int x, int y, t_fdf *fdf)
 	else if (fdf->input_state == INPUT_STATE_ROTATING)
 	{
 		transformation_stack_rotate_x(&fdf->transformation_stack,
-			ndcy * (proj->t - proj->b) * ROTATE_FACTOR);
+			ndcy * (proj->b - proj->t) * ROTATE_FACTOR);
 		transformation_stack_rotate_y(&fdf->transformation_stack,
-			ndcx * (proj->l - proj->r) * ROTATE_FACTOR);
+			ndcx * (proj->r - proj->l) * ROTATE_FACTOR);
 		fdf->drag_start[0] = x;
 		fdf->drag_start[1] = y;
 	}
