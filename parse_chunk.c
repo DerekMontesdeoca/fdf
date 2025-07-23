@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_buffer.c                                     :+:      :+:    :+:   */
+/*   parse_chunk.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dmontesd <dmontesd@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 21:58:07 by dmontesd          #+#    #+#             */
-/*   Updated: 2025/07/15 21:58:08 by dmontesd         ###   ########.fr       */
+/*   Updated: 2025/07/23 23:47:50 by dmontesd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,25 @@
 #include <unistd.h>
 #include "fdf.h"
 #include "libft/libft.h"
+
+static bool	realloc_all(t_parser *p, t_fdf *fdf)
+{
+	size_t	capacity;
+
+	if (p->values_read >= p->arr_capacity)
+	{
+		capacity = sizeof(float [p->arr_capacity]);
+		if (!ft_realloc((void **) &fdf->points, &capacity,
+				sizeof(float [4096])))
+			return (false);
+		capacity = sizeof(uint32_t[p->arr_capacity]);
+		if (!ft_realloc((void **) &fdf->color, &capacity,
+				sizeof(uint32_t [4096])))
+			return (false);
+		p->arr_capacity = capacity / sizeof(*fdf->color);
+	}
+	return (true);
+}
 
 static inline bool	is_delim(char c)
 {
@@ -30,13 +49,15 @@ static bool	advance_line(t_parser *p, t_fdf *fdf)
 		p->width_set = true;
 		fdf->width = (int)p->values_read;
 	}
-	else
+	else if ((size_t)p->y * fdf->width != p->values_read)
 	{
-		if ((size_t)p->y * fdf->width != p->values_read)
-		{
-			ft_fprintf(STDERR_FILENO, "Error: Rows of different"
-				" sizes not allowed");
+		if (!realloc_all(p, fdf))
 			return (false);
+		while (p->values_read < (size_t)p->y * fdf->width)
+		{
+			fdf->points[p->values_read] = 0;
+			fdf->color[p->values_read] = 0xffffff;
+			++p->values_read;
 		}
 	}
 	return (true);
@@ -60,25 +81,6 @@ static inline int	skip_delim(char *buf, int end, int i)
 	while (i < end && is_delim(buf[i]))
 		++i;
 	return (i);
-}
-
-static bool realloc_all(t_parser *p, t_fdf *fdf)
-{
-	size_t	capacity;
-
-	if (p->values_read >= p->arr_capacity)
-	{
-		capacity = sizeof(float[p->arr_capacity]);
-		if (!ft_realloc((void **) &fdf->points, &capacity,
-			sizeof(float[4096])))
-			return (false);
-		capacity = sizeof(uint32_t[p->arr_capacity]);
-		if (!ft_realloc((void **) &fdf->color, &capacity,
-			sizeof(uint32_t[4096])))
-			return (false);
-		p->arr_capacity = capacity / sizeof(*fdf->color);
-	}
-	return (true);
 }
 
 static inline bool	parse_color(t_parser *p, size_t chunk_size, size_t *i)

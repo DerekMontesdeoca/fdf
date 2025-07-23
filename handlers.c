@@ -6,7 +6,7 @@
 /*   By: dmontesd <dmontesd@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 16:02:13 by dmontesd          #+#    #+#             */
-/*   Updated: 2025/07/23 13:20:50 by dmontesd         ###   ########.fr       */
+/*   Updated: 2025/07/23 18:34:24 by dmontesd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ int	key_press_handler(const int keycode, t_fdf *fdf)
 		projection_reset_params(&fdf->transformation_stack.projection);
 		fdf->transformation_stack.dirty[M_PROJECTION] = true;
 		transformation_stack_update(&fdf->transformation_stack);
-		center_model(&fdf->transformation_stack, (float) fdf->width,
-			(float) fdf->height, (float) (fdf->max_z - fdf->min_z));
+		center_model(&fdf->transformation_stack, (float)fdf->width,
+			(float)fdf->height, (float)(fdf->max_z - fdf->min_z));
 	}
 	if (keycode == XK_i)
 	{
@@ -37,8 +37,8 @@ int	key_press_handler(const int keycode, t_fdf *fdf)
 		projection_reset_params(&fdf->transformation_stack.projection);
 		fdf->transformation_stack.dirty[M_PROJECTION] = true;
 		transformation_stack_update(&fdf->transformation_stack);
-		center_model(&fdf->transformation_stack, (float) fdf->width,
-			(float) fdf->height, (float) (fdf->max_z - fdf->min_z));
+		center_model(&fdf->transformation_stack, (float)fdf->width,
+			(float)fdf->height, (float)(fdf->max_z - fdf->min_z));
 	}
 	return (0);
 }

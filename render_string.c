@@ -6,12 +6,11 @@
 /*   By: dmontesd <dmontesd@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 02:29:23 by dmontesd          #+#    #+#             */
-/*   Updated: 2025/07/20 02:29:25 by dmontesd         ###   ########.fr       */
+/*   Updated: 2025/07/23 23:30:48 by dmontesd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
-#include "font.h"
 
 #define SCALE 3
 
@@ -39,11 +38,11 @@ static inline void	render_scaled_bit(t_draw_char_params *p, int row, int col)
 
 static inline void	render_char(t_draw_char_params *p, char c)
 {
-	int		row;
-	int		col;
-	uint8_t	*glyph;
+	const uint8_t	*glyph;
+	int				row;
+	int				col;
 
-	glyph = (uint8_t *)font8x8_basic[(uint8_t)c];
+	glyph = get_glyph(c);
 	row = 0;
 	while (row < 8)
 	{

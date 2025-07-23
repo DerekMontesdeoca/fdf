@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   strntoi.c                                          :+:      :+:    :+:   */
+/*   ft_strntoi.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dmontesd <dmontesd@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 16:59:23 by dmontesd          #+#    #+#             */
-/*   Updated: 2025/07/15 16:59:31 by dmontesd         ###   ########.fr       */
+/*   Updated: 2025/07/23 18:33:47 by dmontesd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ static inline bool	skip_prefix(char **str, char *end)
 	return (true);
 }
 
-int strntohex(uint32_t *n, char *str, char *end)
+int	strntohex(uint32_t *n, char *str, char *end)
 {
 	uint32_t			num;
 	char				*found;
@@ -88,12 +88,10 @@ int strntohex(uint32_t *n, char *str, char *end)
 	{
 		found = ft_strchr(HEXTABLE, ft_tolower(*str));
 		if (!found)
-		{
 			done = true;
-			break;
-		}
-		num <<= 4;
-		num |= (found - HEXTABLE);
+		if (!found)
+			break ;
+		num = (num << 4) | (found - HEXTABLE);
 		++i;
 		++str;
 	}

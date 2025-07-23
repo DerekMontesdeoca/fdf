@@ -6,7 +6,7 @@
 /*   By: dmontesd <dmontesd@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 15:51:48 by dmontesd          #+#    #+#             */
-/*   Updated: 2025/07/23 13:14:06 by dmontesd         ###   ########.fr       */
+/*   Updated: 2025/07/23 23:30:10 by dmontesd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ typedef enum e_matrices
 	M_ORIGIN,
 	M_COUNT,
 }	t_matrices;
-
 
 typedef struct s_projection_ctl
 {
@@ -172,117 +171,133 @@ typedef struct s_fdf
 /*
  * FDF
  */
-bool	make_fdf(t_fdf *f, char *filename);
-void	fdf_destroy_contents(t_fdf *f);
-bool	parse_file(t_fdf *fdf, char *filename);
-int		fdf_render(t_fdf *f);
-void	fdf_init_edges(t_fdf *f);
-void	draw_lines(t_fdf *f);
+bool		make_fdf(t_fdf *f, char *filename);
+void		fdf_destroy_contents(t_fdf *f);
+int			fdf_render(t_fdf *f);
+void		fdf_init_edges(t_fdf *f);
+void		fdf_draw_lines(t_fdf *f);
+bool		parse_file(t_fdf *fdf, char *filename);
 
 /*
  * HANDLERS
  */
-int		key_press_handler(int keycode, t_fdf *fdf);
-int		button_press_handler(int button, int x, int y, t_fdf *fdf);
-int		button_release_handler(int button, int x, int y, t_fdf *fdf);
-int		motion_handler(int x, int y, t_fdf *fdf);
+int			key_press_handler(int keycode, t_fdf *fdf);
+int			button_press_handler(int button, int x, int y, t_fdf *fdf);
+int			button_release_handler(int button, int x, int y, t_fdf *fdf);
+int			motion_handler(int x, int y, t_fdf *fdf);
 
 /*
  * RENDER
  */
-void	render_string(char *str, uint32_t *buf, int x, int y);
-void	update_timer(t_renderer *r);
+void		render_string(char *str, uint32_t *buf, int x, int y);
+void		update_timer(t_renderer *r);
 
 /*
  * PARSE INPUT
  */
-bool	parse_chunk(t_parser *p, t_fdf *fdf, size_t chunk_size);
+bool		parse_chunk(t_parser *p, t_fdf *fdf, size_t chunk_size);
 
 /*
  * MATRIX
  */
-void	identity_matrix4(float *out);
-void	matrix4_multiply(const float *a, const float *b, float *out);
-void	matrix4_scalar_multiply(float *m, float scalar);
-void	matrix4_rotate_x_abs(float *m, float rads);
-void	matrix4_rotate_y_abs(float *m, float rads);
-void	matrix4_rotate_z_abs(float *m, float rads);
-void	matrix4_translate(
-			float *m,
-			float delta_x,
-			float delta_y,
-			float delta_z
-			);
-void	matrix4_dot_product(
-	float *m,
-	float *a,
-	float *out
-	);
+void		identity_matrix4(float *out);
+void		matrix4_multiply(const float *a, const float *b, float *out);
+void		matrix4_scalar_multiply(float *m, float scalar);
+void		matrix4_rotate_x_abs(float *m, float rads);
+void		matrix4_rotate_y_abs(float *m, float rads);
+void		matrix4_rotate_z_abs(float *m, float rads);
+void		matrix4_translate(
+				float *m,
+				float delta_x,
+				float delta_y,
+				float delta_z
+				);
+void		matrix4_dot_product(
+				float *m,
+				float *a,
+				float *out
+				);
 
 /*
  * TRANSFORMATION STACK
  */
-void	make_transformation_stack(t_transformation_stack *t);
+void		make_transformation_stack(t_transformation_stack *t);
 
-void	transformation_stack_rotate_x(t_transformation_stack *t, float dx);
-void	transformation_stack_rotate_y(t_transformation_stack *t, float dy);
-void	transformation_stack_rotate_z(t_transformation_stack *t, float dz);
+void		transformation_stack_rotate_x(t_transformation_stack *t, float dx);
+void		transformation_stack_rotate_y(t_transformation_stack *t, float dy);
+void		transformation_stack_rotate_z(t_transformation_stack *t, float dz);
 
-void	transformation_stack_rview_x(t_transformation_stack *t, float dx);
-void	transformation_stack_rview_x2(t_transformation_stack *t, float dx);
-void	transformation_stack_rview_z(t_transformation_stack *t, float dz);
+void		transformation_stack_rview_x(t_transformation_stack *t, float dx);
+void		transformation_stack_rview_x2(t_transformation_stack *t, float dx);
+void		transformation_stack_rview_z(t_transformation_stack *t, float dz);
 
-void	transformation_stack_isometric(t_transformation_stack *t);
-void	transformation_stack_parallel(t_transformation_stack *t);
+void		transformation_stack_isometric(t_transformation_stack *t);
+void		transformation_stack_parallel(t_transformation_stack *t);
 
-void	transformation_stack_update(t_transformation_stack *t);
-void	transformation_stack_ortho(
-			t_transformation_stack *t,
-			float x,
-			float y,
-			float z
-			);
-void	transformation_stack_zoom(t_transformation_stack *t, int direction);
-void	transformation_stack_translate(
-			t_transformation_stack *t,
-			float dx,
-			float dy,
-			float dz
-			);
-void	transformation_stack_pan(
-			t_transformation_stack *t,
-			float dx,
-			float dy
-			);
-void	transformation_stack_origin(
-			t_transformation_stack *t,
-			float dx,
-			float dy,
-			float dz
-			);
-void	center_model(
-			t_transformation_stack *t,
-			float width,
-			float height,
-			float depth
-			);
+void		transformation_stack_update(t_transformation_stack *t);
+void		transformation_stack_ortho(
+				t_transformation_stack *t,
+				float x,
+				float y,
+				float z
+				);
+void		transformation_stack_zoom(t_transformation_stack *t, int direction);
+void		transformation_stack_translate(
+				t_transformation_stack *t,
+				float dx,
+				float dy,
+				float dz
+				);
+void		transformation_stack_pan(
+				t_transformation_stack *t,
+				float dx,
+				float dy
+				);
+void		transformation_stack_origin(
+				t_transformation_stack *t,
+				float dx,
+				float dy,
+				float dz
+				);
+void		center_model(
+				t_transformation_stack *t,
+				float width,
+				float height,
+				float depth
+				);
 
 /*
  * PROJECTION CTL
  */
-void	make_projection_ctl(
-			t_projection_ctl *p,
-			float width,
-			float height,
-			float depth
-			);
-void	projection_reset_params(t_projection_ctl *p);
+void		make_projection_ctl(
+				t_projection_ctl *p,
+				float width,
+				float height,
+				float depth
+				);
+void		projection_reset_params(t_projection_ctl *p);
+
+/*
+ * BRESENHAM
+ */
+void		bresenham_init(t_bresenham_state *b, t_fdf *fdf, int i);
+void		draw_line_y_major(
+				t_bresenham_state *bresenham,
+				unsigned int *screen
+				);
+void		draw_line_x_major(
+				t_bresenham_state *bresenham,
+				unsigned int *screen
+				);
 
 /*
  * UTIL
  */
-int		ft_strntoi(int *n, char *str, size_t max);
-int		strntohex(uint32_t *n, char *str, char *end);
-bool	ft_realloc(void **ptr, size_t *cap, size_t start);
+int			ft_strntoi(int *n, char *str, size_t max);
+int			strntohex(uint32_t *n, char *str, char *end);
+bool		ft_realloc(void **ptr, size_t *cap, size_t start);
+uint32_t	pack_color(t_bresenham_state *b, int step);
+uint8_t		*get_glyph(char c);
+int			ft_abs(int n);
 
 #endif

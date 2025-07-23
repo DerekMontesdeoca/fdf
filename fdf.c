@@ -6,7 +6,7 @@
 /*   By: dmontesd <dmontesd@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 01:42:54 by dmontesd          #+#    #+#             */
-/*   Updated: 2025/07/23 13:13:22 by dmontesd         ###   ########.fr       */
+/*   Updated: 2025/07/23 20:06:17 by dmontesd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <mlx.h>
+#include "mlx.h"
 #include <X11/X.h>
 #include "libft/libft.h"
 
 static inline void	init_transformation_stack(t_fdf *f)
 {
-	t_projection_ctl *projection;
+	t_projection_ctl	*projection;
 
 	f->transformation_stack.dirty[M_PROJECTION] = true;
 	projection = &f->transformation_stack.projection;
@@ -30,11 +30,11 @@ static inline void	init_transformation_stack(t_fdf *f)
 		-(float)(f->min_z + f->max_z) / 2.0f);
 	transformation_stack_isometric(&f->transformation_stack);
 	make_projection_ctl(projection, (float) f->width, (float) f->height,
-		(float) (f->max_z - f->min_z));
+		(float)(f->max_z - f->min_z));
 	transformation_stack_translate(&f->transformation_stack, 0, 0,
 		-projection->box[2] / 2.0f);
 	transformation_stack_update(&f->transformation_stack);
-	center_model( &f->transformation_stack, f->width, f->height,
+	center_model(&f->transformation_stack, f->width, f->height,
 		(float)(f->max_z - f->min_z));
 }
 

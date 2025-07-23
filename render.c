@@ -6,7 +6,7 @@
 /*   By: dmontesd <dmontesd@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 01:45:37 by dmontesd          #+#    #+#             */
-/*   Updated: 2025/07/23 12:55:58 by dmontesd         ###   ########.fr       */
+/*   Updated: 2025/07/23 18:37:59 by dmontesd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	transform_points(t_fdf *f)
 			flat_index = i[0] * f->width + i[1];
 			sp[0] = (float) i[1];
 			sp[1] = (float) i[0];
-			sp[2] =  f->points[flat_index];
+			sp[2] = f->points[flat_index];
 			sp[3] = 1;
 			dp = (float *) &f->transformed_points[flat_index];
 			matrix4_dot_product(f->transformation_stack.combined, sp, dp);
@@ -99,7 +99,7 @@ int	fdf_render(t_fdf *f)
 	transform_points(f);
 	update_timer(&f->renderer);
 	clear_screen(f);
-	draw_lines(f);
+	fdf_draw_lines(f);
 	render_string(f->renderer.fps_string, (uint32_t *) f->renderer.data, 100,
 		100);
 	if (mlx_put_image_to_window(f->mlx, f->window, f->image, 0, 0) == -1)
