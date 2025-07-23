@@ -6,7 +6,7 @@
 /*   By: dmontesd <dmontesd@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 16:05:16 by dmontesd          #+#    #+#             */
-/*   Updated: 2025/07/15 16:05:17 by dmontesd         ###   ########.fr       */
+/*   Updated: 2025/07/23 13:13:15 by dmontesd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ void	make_transformation_stack(t_transformation_stack *t)
 	t->ty = 0;
 	t->tz = 0;
 	t->projection.zoom_factor = 1.0f;
-	t->projection.type = PROJECTION_ORTHO;
 	t->projection.pan_x = 0;
 	t->projection.pan_y = 0;
 	i = 0;

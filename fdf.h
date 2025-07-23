@@ -6,7 +6,7 @@
 /*   By: dmontesd <dmontesd@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 15:51:48 by dmontesd          #+#    #+#             */
-/*   Updated: 2025/07/13 08:48:21 by dmontesd         ###   ########.fr       */
+/*   Updated: 2025/07/23 13:14:06 by dmontesd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,17 +76,10 @@ typedef enum e_matrices
 	M_COUNT,
 }	t_matrices;
 
-typedef enum e_projection
-{
-	PROJECTION_ORTHO,
-	PROJECTION_PARALLEL
-}	t_projection;
 
 typedef struct s_projection_ctl
 {
 	float			box[3];
-	t_projection	type;
-	float			fov;
 	float			zoom_factor;
 	float			pan_x;
 	float			pan_y;
@@ -189,7 +182,7 @@ void	draw_lines(t_fdf *f);
 /*
  * HANDLERS
  */
-int		key_press_handler(int keycode, void *mlx);
+int		key_press_handler(int keycode, t_fdf *fdf);
 int		button_press_handler(int button, int x, int y, t_fdf *fdf);
 int		button_release_handler(int button, int x, int y, t_fdf *fdf);
 int		motion_handler(int x, int y, t_fdf *fdf);
@@ -240,7 +233,7 @@ void	transformation_stack_rview_x2(t_transformation_stack *t, float dx);
 void	transformation_stack_rview_z(t_transformation_stack *t, float dz);
 
 void	transformation_stack_isometric(t_transformation_stack *t);
-void	transformation_stack_parallel();
+void	transformation_stack_parallel(t_transformation_stack *t);
 
 void	transformation_stack_update(t_transformation_stack *t);
 void	transformation_stack_ortho(
@@ -283,6 +276,7 @@ void	make_projection_ctl(
 			float height,
 			float depth
 			);
+void	projection_reset_params(t_projection_ctl *p);
 
 /*
  * UTIL

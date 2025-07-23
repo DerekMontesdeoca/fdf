@@ -6,7 +6,7 @@
 /*   By: dmontesd <dmontesd@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 16:13:44 by dmontesd          #+#    #+#             */
-/*   Updated: 2025/07/15 16:13:45 by dmontesd         ###   ########.fr       */
+/*   Updated: 2025/07/23 13:12:59 by dmontesd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static inline void	update_rotations(t_transformation_stack *t)
 	if (t->dirty[M_ROTATION_Y])
 		matrix4_rotate_y_abs(t->matrices[M_ROTATION_Y], t->ry);
 	if (t->dirty[M_ROTATION_Z])
-		matrix4_rotate_x_abs(t->matrices[M_ROTATION_Z], t->rz);
+		matrix4_rotate_z_abs(t->matrices[M_ROTATION_Z], t->rz);
 }
 
 static inline void	update_translation(t_transformation_stack *t)
@@ -53,28 +53,23 @@ static inline void	update_projection(t_transformation_stack *t)
 
 	if (!t->dirty[M_PROJECTION])
 		return ;
-	if (t->projection.type == PROJECTION_ORTHO)
-	{
-		p = &t->projection;
-		p->l = -p->box[0] / 2 * p->zoom_factor + p->pan_x;
-		p->r = p->box[0] / 2 * p->zoom_factor + p->pan_x;
-		p->t = -p->box[1] / 2 * p->zoom_factor + p->pan_y;
-		p->b = p->box[1] / 2 * p->zoom_factor + p->pan_y;
-		p->n = 0.1f;
-		p->f = p->box[2];
-		identity_matrix4(t->matrices[M_PROJECTION]);
-		t->matrices[M_PROJECTION][0] = 2.0f / (p->r - p->l);
-		t->matrices[M_PROJECTION][5] = 2.0f / (p->t - p->b);
-		t->matrices[M_PROJECTION][10] = -2.0f / (p->f - p->n);
-		t->matrices[M_PROJECTION][3] = -(p->r + p->l)
-			/ (p->r - p->l);
-		t->matrices[M_PROJECTION][7] = -(p->t + p->b)
-			/ (p->t - p->b);
-		t->matrices[M_PROJECTION][11] = -(p->f + p->n)
-			/ (p->f - p->n);
-	}
-	else
-		assert(false && "Unreachable code");
+	p = &t->projection;
+	p->l = -p->box[0] / 2 * p->zoom_factor + p->pan_x;
+	p->r = p->box[0] / 2 * p->zoom_factor + p->pan_x;
+	p->t = -p->box[1] / 2 * p->zoom_factor + p->pan_y;
+	p->b = p->box[1] / 2 * p->zoom_factor + p->pan_y;
+	p->n = 0.1f;
+	p->f = p->box[2];
+	identity_matrix4(t->matrices[M_PROJECTION]);
+	t->matrices[M_PROJECTION][0] = 2.0f / (p->r - p->l);
+	t->matrices[M_PROJECTION][5] = 2.0f / (p->t - p->b);
+	t->matrices[M_PROJECTION][10] = -2.0f / (p->f - p->n);
+	t->matrices[M_PROJECTION][3] = -(p->r + p->l)
+		/ (p->r - p->l);
+	t->matrices[M_PROJECTION][7] = -(p->t + p->b)
+		/ (p->t - p->b);
+	t->matrices[M_PROJECTION][11] = -(p->f + p->n)
+		/ (p->f - p->n);
 }
 
 static inline void	recompute_final_transformation(t_transformation_stack *t)

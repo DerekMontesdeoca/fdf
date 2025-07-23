@@ -6,7 +6,7 @@
 /*   By: dmontesd <dmontesd@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 01:45:37 by dmontesd          #+#    #+#             */
-/*   Updated: 2025/07/20 01:45:41 by dmontesd         ###   ########.fr       */
+/*   Updated: 2025/07/23 12:55:58 by dmontesd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 
 void	transform_points(t_fdf *f)
 {
-	int		i[4];
+	int		i[2];
 	float	sp[4];
 	float	*dp;
 	int		flat_index;
@@ -37,19 +37,7 @@ void	transform_points(t_fdf *f)
 			sp[2] =  f->points[flat_index];
 			sp[3] = 1;
 			dp = (float *) &f->transformed_points[flat_index];
-			i[2] = 0;
-			while (i[2] < 4)
-			{
-				dp[i[2]] = 0;
-				i[3] = 0;
-				while (i[3] < 4)
-				{
-					dp[i[2]] += f->transformation_stack.combined[i[2] * 4 + i[3]]
-						* sp[i[3]];
-					++i[3];
-				}
-				++i[2];
-			}
+			matrix4_dot_product(f->transformation_stack.combined, sp, dp);
 			++i[1];
 		}
 		++i[0];

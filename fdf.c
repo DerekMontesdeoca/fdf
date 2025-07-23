@@ -6,7 +6,7 @@
 /*   By: dmontesd <dmontesd@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 01:42:54 by dmontesd          #+#    #+#             */
-/*   Updated: 2025/07/20 01:42:58 by dmontesd         ###   ########.fr       */
+/*   Updated: 2025/07/23 13:13:22 by dmontesd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,12 @@ static inline void	init_transformation_stack(t_fdf *f)
 
 	f->transformation_stack.dirty[M_PROJECTION] = true;
 	projection = &f->transformation_stack.projection;
-	projection->type = PROJECTION_ORTHO;
 	transformation_stack_origin(&f->transformation_stack,
 		-((float)f->width / 2), -((float)f->height / 2),
 		-(float)(f->min_z + f->max_z) / 2.0f);
 	transformation_stack_isometric(&f->transformation_stack);
-	make_projection_ctl(projection, f->width, f->height, f->max_z - f->min_z);
+	make_projection_ctl(projection, (float) f->width, (float) f->height,
+		(float) (f->max_z - f->min_z));
 	transformation_stack_translate(&f->transformation_stack, 0, 0,
 		-projection->box[2] / 2.0f);
 	transformation_stack_update(&f->transformation_stack);
@@ -44,7 +44,7 @@ static inline void	init_mlx_handlers(t_fdf *f)
 	mlx_hook(f->window, DestroyNotify, SubstructureNotifyMask, mlx_loop_end,
 		f->mlx);
 	mlx_loop_hook(f->mlx, fdf_render, f);
-	mlx_hook(f->window, KeyPress, KeyPressMask, key_press_handler, f->mlx);
+	mlx_hook(f->window, KeyPress, KeyPressMask, key_press_handler, f);
 	mlx_hook(f->window, ButtonPress, ButtonPressMask, button_press_handler, f);
 	mlx_hook(f->window, MotionNotify, Button1MotionMask | Button3MotionMask,
 		motion_handler, f);
