@@ -6,11 +6,10 @@
 /*   By: dmontesd <dmontesd@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 16:02:13 by dmontesd          #+#    #+#             */
-/*   Updated: 2025/07/23 18:34:24 by dmontesd         ###   ########.fr       */
+/*   Updated: 2025/07/24 13:39:47 by dmontesd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <tgmath.h>
 #include <X11/keysym.h>
 #include <X11/Xlib.h>
 #include "mlx.h"
